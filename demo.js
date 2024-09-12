@@ -63,75 +63,12 @@ function updateScene() {
     demo.showMeshChecked = document.getElementById("showMeshChecked").checked;
     demo.adaptiveMeshCheck = document.getElementById("adaptiveMeshCheck").checked;
 
-    var nX = 256; // document.getElementById("nXTextBox").value;
-    if (nX.length > 0) {
-        nX = Number(nX);
-    }
-
-    var nY = 256; // document.getElementById("nYTextBox").value;
-    if (nY.length > 0) {
-        nY = Number(nY);
-    }
-
-    if (nX != demo.nX || nY != demo.nY) {
-        demo.nX = nX;
-        demo.nY = nY;
-
-        createComputeBuffers(demo.nX, demo.nY); 
-
-        initialseMeshmoveStepShader();
-        initialiseMaxShader();
-        initialiseMinShader();
-        initialiseLinesShader();
-
-        initialiseLinesProgram();
-        initialiseMeshData(computeFrameBuffer.width, computeFrameBuffer.height,  -1.0,-1.0, 1.0,1.0);
-        initialiseBoundaryConditionData(computeFrameBuffer.width, computeFrameBuffer.height);
-        resetStateVariables();
-        initialseCheckersShader();
-    }
-
-    demo.bcOption = 'natural'; // document.querySelector('input[name="bcOption"]:checked').value;
-
-    var dtauTextBox = 0.1; // document.getElementById("dtauTextBox").value;
-    if (dtauTextBox.length > 0) {
-        demo.dtau = Number(dtauTextBox);
-    }
-    demo.dtau = 10000.0;
-
-    var betaTextBox = 0.1; // document.getElementById("betaTextBox").value;
-    if (betaTextBox.length > 0) {
-        demo.beta = Number(betaTextBox);
-    }
-    demo.beta = 0.1;
-
-    /*if (demo.beta < 1e-3) {
-        document.getElementById("betaTextBox").style.backgroundColor = '#ff5';
-    } else {
-        document.getElementById("betaTextBox").style.backgroundColor = '#fff';
-    }*/
-
-    var alphaTextBox = 0.1;// document.getElementById("alphaTextBox").value;
-    if (alphaTextBox.length > 0) {
-        demo.alpha = Number(alphaTextBox);
-    }
-
-    demo.jacobiIterationCount = 32;
-    /*var jacobiIterationTextBox = 32;// document.getElementById("jacobiIterationTextBox");
-    if (jacobiIterationTextBox.value.length > 0){
-        demo.jacobiIterationCount = Number(jacobiIterationTextBox.value);
-        if (demo.jacobiIterationCount <= 1){
-            demo.jacobiIterationCount = 1;
-        }
-    }*/
-
-    demo.jacobiX0Option = 1;// document.querySelector('input[name="jacobiX0Option"]:checked').value;
-    demo.gridColorOption = 'white';// 'black';// document.querySelector('input[name="gridColorOption"]:checked').value;
-    demo.colorsid = '4'; // 1 5
-
-    // document.querySelector('input[name="colorOption"]:checked').value;
-
-    demo.gridLineWidth = 0.001;
+    demo.bcOption = 'natural'; // Fixed for now
+    demo.jacobiIterationCount = 32;  // Fixed for now
+    demo.jacobiX0Option = ''; // Dont use xinit 
+    demo.gridColorOption = 'white';  // Fixed for now
+    demo.colorsid = '4';  // Fixed for now
+    demo.gridLineWidth = 0.001; // Fixed for now
 
     if (randomKick) {
         var width = demo.nX, height = demo.nY;
@@ -176,14 +113,13 @@ function renderScene() {
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
     checkersPlot();
-
+    
     if (demo.showMeshChecked) {
         renderLines(demo.x, .3, .3, .3, 1, demo.gridLineWidth, 1);
     }
 }
 
 function tick() {
-
     if (reset) {
         resetStateVariables();
         reset = false;
@@ -292,7 +228,8 @@ function resetStateVariables() {
     demo.b = createComputeTexture(width, height, demo.dummyData); 
     demo.uMin = 0.0;
     demo.uMax = 1.0;
-    demo.dt = 0.03;
+    demo.dt = 1.0;
+    demo.dtau = 10000.0;
     demo.beta = 0.0; 
     demo.alpha = 0.0;
     demo.jacobiIterationCount = 64;
