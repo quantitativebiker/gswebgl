@@ -69,23 +69,23 @@ const crdStepFragmentShader = `
         float one_dt   = 1.0 / dt;
 
         float x_xi   = 0.5 * (xR.x - xL.x) * one_dxi;
-        float x_eta  = 0.5 * (xR.y - xL.y) * one_deta;
-        float y_xi   = 0.5 * (xT.x - xB.x) * one_dxi;
+        float x_eta  = 0.5 * (xT.x - xB.x) * one_deta;
+        float y_xi   = 0.5 * (xR.y - xL.y) * one_dxi;
         float y_eta  = 0.5 * (xT.y - xB.y) * one_deta;
 
         float cof1 = one_dxi * one_dxi;
         float cof2 = one_dxi * one_deta * 0.25;
         float cof4 = one_deta * one_deta;
 
-        float y_xixi   = (xT.x  - xc.x  - xc.x  + xB.x)  * cof1;
-        float y_etaxi  = (xTR.y - xBR.y - xTL.y + xBL.y) * cof2; 
-        float y_xieta  = (xTR.y - xTL.y - xBR.y + xBL.y) * cof2; 
+        float y_xixi   = (xT.y  - xc.y  - xc.y  + xB.y)  * cof1;
+        float y_etaxi  = (xTR.y - xBR.y - xTL.y + xBL.y) * cof2; // needs to be changed. address later.
+        float y_xieta  = (xTR.y - xTL.y - xBR.y + xBL.y) * cof2; // ditto.
         float y_etaeta = (xT.y  - xc.y  - xc.y  + xB.y)  * cof4;
 
         float x_xixi   = (xR.x  - xc.x  - xc.x  + xL.x)  * cof1;
-        float x_etaxi  = (xTR.x - xBR.x - xTL.x + xBL.x) * cof2; 
-        float x_xieta  = (xTR.x - xTL.x - xBR.x + xBL.x) * cof2; 
-        float x_etaeta = (xR.y  - xc.y  - xc.y  + xL.y)  * cof4;
+        float x_etaxi  = (xTR.x - xBR.x - xTL.x + xBL.x) * cof2; // ditto.
+        float x_xieta  = (xTR.x - xTL.x - xBR.x + xBL.x) * cof2; // ditto.
+        float x_etaeta = (xR.x  - xc.x  - xc.x  + xL.x)  * cof4;
 
         float j = x_xi * y_eta - x_eta * y_xi;
         float one_j  = 1.0 / j;
@@ -115,8 +115,8 @@ const crdStepFragmentShader = `
         float D  =  (xi_x * xi_x1  + xi_y * xi_y1  + eta_x * xi_x2  + eta_y * xi_y2  ) * one_dxi  * 0.5;
         float E  =  (xi_x * eta_x1 + xi_y * eta_y1 + eta_x * eta_x2 + eta_y * eta_y2 ) * one_deta * 0.5;
 
-        float xi_t  = -0.0e-5  +(xi_x  * (xc.x - x0c.x)   +xi_y  * (xc.y - x0c.y) ) * one_dt ;
-        float eta_t =  0.0e-5  +(eta_x * (xc.x - x0c.x)   +eta_y * (xc.y - x0c.y) ) * one_dt ;
+        float xi_t  = (xi_x  * (xc.x - x0c.x)   +xi_y  * (xc.y - x0c.y) ) * one_dt ;
+        float eta_t = (eta_x * (xc.x - x0c.x)   +eta_y * (xc.y - x0c.y) ) * one_dt ;
 
         vec4 diffusivities = vec4(Du, Dv, 1.0, 1.0);
         vec4 ukTerm = - diffusivities * ( A  * (ukR + ukL) + B1 * (ukTR - ukBR - ukTL + ukBL)
@@ -137,8 +137,8 @@ const crdStepFragmentShader = `
         vec4 bc = boundaryCondition.x * ukR + boundaryCondition.y * ukL + boundaryCondition.z * ukT + boundaryCondition.w * ukB;
         float bcm = boundaryCondition.x + boundaryCondition.y + boundaryCondition.z + boundaryCondition.w;
 
-        float u1_xi  = (ukR.x - ukL.x) * one_dxi  * 0.5;
-        float u1_eta = (ukT.x - ukB.x) * one_dxi  * 0.5;
+        float u1_xi  = (ukR.x - ukL.x) * one_dxi   * 0.5;
+        float u1_eta = (ukT.x - ukB.x) * one_deta  * 0.5;
 
         const float beta = 1e0; // hardcoded for demo.
         float w = sqrt(1.0 + beta*beta * (u1_xi*u1_xi + u1_eta*u1_eta) );
