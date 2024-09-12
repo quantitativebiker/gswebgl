@@ -1,5 +1,5 @@
-// Convection-reaction-diffusion FDM solver with non-conversative semi-ALE moving mesh formulation
-// (on the Forward step, asymetrically not matched on Backward step in this demo) 
+// Convection-reaction-diffusion FDM solver with non-conservative semi-ALE moving mesh formulation
+// (on the Forward step, asymmetrically not matched on Backward step in this demo) 
 
 const crdStepVertexShader = `
     attribute vec4 aVertexPosition;
